@@ -46,17 +46,18 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // callButton
             // 
-            this.callButton.Location = new System.Drawing.Point(19, 238);
+            this.callButton.Location = new System.Drawing.Point(254, 243);
             this.callButton.Name = "callButton";
             this.callButton.Size = new System.Drawing.Size(100, 23);
             this.callButton.TabIndex = 0;
-            this.callButton.Text = "Compute N(x)";
+            this.callButton.Text = "Generate unit test";
             this.callButton.UseVisualStyleBackColor = true;
             this.callButton.Click += new System.EventHandler(this.Button1Click);
             // 
@@ -115,9 +116,9 @@
             // registeredFunc
             // 
             this.registeredFunc.FormattingEnabled = true;
-            this.registeredFunc.Location = new System.Drawing.Point(19, 10);
+            this.registeredFunc.Location = new System.Drawing.Point(112, 10);
             this.registeredFunc.Name = "registeredFunc";
-            this.registeredFunc.Size = new System.Drawing.Size(335, 21);
+            this.registeredFunc.Size = new System.Drawing.Size(242, 21);
             this.registeredFunc.TabIndex = 9;
             this.registeredFunc.SelectedIndexChanged += new System.EventHandler(this.RegisteredFuncSelectedIndexChanged);
             // 
@@ -219,11 +220,21 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "xmin";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(16, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(90, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Maxima function :";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(375, 278);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.registeredFunc);
@@ -263,6 +274,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
     }
 }
 
