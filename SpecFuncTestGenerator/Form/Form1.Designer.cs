@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.callButton = new System.Windows.Forms.Button();
-            this.inputValueMin = new System.Windows.Forms.TextBox();
+            this.input1ValueMin = new System.Windows.Forms.TextBox();
             this.precDigits = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.isCpp = new System.Windows.Forms.RadioButton();
             this.isCSharp = new System.Windows.Forms.RadioButton();
-            this.inputValueMax = new System.Windows.Forms.TextBox();
+            this.input1ValueMax = new System.Windows.Forms.TextBox();
             this.registeredFunc = new System.Windows.Forms.ComboBox();
             this.parameter1 = new System.Windows.Forms.TextBox();
             this.parameter2 = new System.Windows.Forms.TextBox();
@@ -47,6 +47,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.input2ValueMin = new System.Windows.Forms.TextBox();
+            this.input2ValueMax = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -61,12 +65,13 @@
             this.callButton.UseVisualStyleBackColor = true;
             this.callButton.Click += new System.EventHandler(this.Button1Click);
             // 
-            // inputValueMin
+            // input1ValueMin
             // 
-            this.inputValueMin.Location = new System.Drawing.Point(40, 23);
-            this.inputValueMin.Name = "inputValueMin";
-            this.inputValueMin.Size = new System.Drawing.Size(44, 20);
-            this.inputValueMin.TabIndex = 2;
+            this.input1ValueMin.Location = new System.Drawing.Point(40, 19);
+            this.input1ValueMin.Name = "input1ValueMin";
+            this.input1ValueMin.Size = new System.Drawing.Size(44, 20);
+            this.input1ValueMin.TabIndex = 2;
+            this.input1ValueMin.Text = "0";
             // 
             // precDigits
             // 
@@ -74,6 +79,7 @@
             this.precDigits.Name = "precDigits";
             this.precDigits.Size = new System.Drawing.Size(44, 20);
             this.precDigits.TabIndex = 3;
+            this.precDigits.Text = "40";
             // 
             // label1
             // 
@@ -98,6 +104,7 @@
             // isCSharp
             // 
             this.isCSharp.AutoSize = true;
+            this.isCSharp.Checked = true;
             this.isCSharp.Location = new System.Drawing.Point(19, 60);
             this.isCSharp.Name = "isCSharp";
             this.isCSharp.Size = new System.Drawing.Size(69, 17);
@@ -106,12 +113,13 @@
             this.isCSharp.Text = "C# NUnit";
             this.isCSharp.UseVisualStyleBackColor = true;
             // 
-            // inputValueMax
+            // input1ValueMax
             // 
-            this.inputValueMax.Location = new System.Drawing.Point(150, 23);
-            this.inputValueMax.Name = "inputValueMax";
-            this.inputValueMax.Size = new System.Drawing.Size(44, 20);
-            this.inputValueMax.TabIndex = 8;
+            this.input1ValueMax.Location = new System.Drawing.Point(150, 19);
+            this.input1ValueMax.Name = "input1ValueMax";
+            this.input1ValueMax.Size = new System.Drawing.Size(44, 20);
+            this.input1ValueMax.TabIndex = 8;
+            this.input1ValueMax.Text = "1";
             // 
             // registeredFunc
             // 
@@ -128,6 +136,7 @@
             this.parameter1.Name = "parameter1";
             this.parameter1.Size = new System.Drawing.Size(100, 20);
             this.parameter1.TabIndex = 10;
+            this.parameter1.Text = "0";
             // 
             // parameter2
             // 
@@ -135,6 +144,7 @@
             this.parameter2.Name = "parameter2";
             this.parameter2.Size = new System.Drawing.Size(100, 20);
             this.parameter2.TabIndex = 11;
+            this.parameter2.Text = "1";
             // 
             // parameter3
             // 
@@ -157,13 +167,17 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.input2ValueMin);
+            this.groupBox2.Controls.Add(this.input2ValueMax);
             this.groupBox2.Controls.Add(this.radioButton2);
-            this.groupBox2.Controls.Add(this.radioButton1);
-            this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.radioButton1);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.inputValueMin);
-            this.groupBox2.Controls.Add(this.inputValueMax);
+            this.groupBox2.Controls.Add(this.input1ValueMin);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.input1ValueMax);
             this.groupBox2.Location = new System.Drawing.Point(19, 122);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(201, 100);
@@ -174,7 +188,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(126, 53);
+            this.radioButton2.Location = new System.Drawing.Point(125, 74);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(42, 17);
             this.radioButton2.TabIndex = 11;
@@ -185,7 +199,8 @@
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(56, 53);
+            this.radioButton1.Checked = true;
+            this.radioButton1.Location = new System.Drawing.Point(55, 74);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(54, 17);
             this.radioButton1.TabIndex = 10;
@@ -196,7 +211,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 55);
+            this.label5.Location = new System.Drawing.Point(5, 76);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(34, 13);
             this.label5.TabIndex = 9;
@@ -205,7 +220,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(113, 26);
+            this.label4.Location = new System.Drawing.Point(113, 22);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(31, 13);
             this.label4.TabIndex = 1;
@@ -214,7 +229,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 26);
+            this.label3.Location = new System.Drawing.Point(6, 22);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(28, 13);
             this.label3.TabIndex = 0;
@@ -228,6 +243,40 @@
             this.label2.Size = new System.Drawing.Size(90, 13);
             this.label2.TabIndex = 15;
             this.label2.Text = "Maxima function :";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(113, 48);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(31, 13);
+            this.label6.TabIndex = 13;
+            this.label6.Text = "ymax";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 48);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(28, 13);
+            this.label7.TabIndex = 12;
+            this.label7.Text = "ymin";
+            // 
+            // input2ValueMin
+            // 
+            this.input2ValueMin.Location = new System.Drawing.Point(40, 45);
+            this.input2ValueMin.Name = "input2ValueMin";
+            this.input2ValueMin.Size = new System.Drawing.Size(44, 20);
+            this.input2ValueMin.TabIndex = 14;
+            this.input2ValueMin.Text = "0";
+            // 
+            // input2ValueMax
+            // 
+            this.input2ValueMax.Location = new System.Drawing.Point(150, 45);
+            this.input2ValueMax.Name = "input2ValueMax";
+            this.input2ValueMax.Size = new System.Drawing.Size(44, 20);
+            this.input2ValueMax.TabIndex = 15;
+            this.input2ValueMax.Text = "1";
             // 
             // Form1
             // 
@@ -257,12 +306,12 @@
         #endregion
 
         private System.Windows.Forms.Button callButton;
-        private System.Windows.Forms.TextBox inputValueMin;
+        private System.Windows.Forms.TextBox input1ValueMin;
         private System.Windows.Forms.TextBox precDigits;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton isCpp;
         private System.Windows.Forms.RadioButton isCSharp;
-        private System.Windows.Forms.TextBox inputValueMax;
+        private System.Windows.Forms.TextBox input1ValueMax;
         private System.Windows.Forms.ComboBox registeredFunc;
         private System.Windows.Forms.TextBox parameter1;
         private System.Windows.Forms.TextBox parameter2;
@@ -275,6 +324,10 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox input2ValueMin;
+        private System.Windows.Forms.TextBox input2ValueMax;
     }
 }
 

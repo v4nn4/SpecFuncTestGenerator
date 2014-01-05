@@ -7,10 +7,10 @@ namespace SpecFuncTestGenerator
 {
     public class MaximaMotor : IFormalCalculusMotor
     {
-        private readonly string _maximaDir = @"D:\Program Files (x86)\Maxima-5.31.2\share\maxima\5.31.2\share";
+        private const string MaximaDir = @"D:\Program Files (x86)\Maxima-5.31.2\share\maxima\5.31.2\share";
         private readonly string _currentDir = Directory.GetCurrentDirectory();
 
-        public string[] Call(string funcName, double[] values, double[] funcArgs, int precDigits)
+        public string[] Call(string funcName, double[][] values, double[] funcArgs, int precDigits)
         {
             var filename = FormatFileName(funcName,funcArgs);
             GenerateBatch(filename, funcName, values, funcArgs, precDigits);
@@ -34,25 +34,31 @@ namespace SpecFuncTestGenerator
 
         private void DeleteBatch(string filename)
         {
-            File.Delete(Path.Combine(_maximaDir, filename));
+            File.Delete(Path.Combine(MaximaDir, filename));
             File.Delete(Path.Combine(_currentDir, "run.bat"));
         }
 
-        private void GenerateBatch(string filename, string funcName, double[] values, double[] funcArgs, int precDigits)
+        private void GenerateBatch(string filename, string funcName, double[][] values, double[] funcArgs, int precDigits)
         {
             // First generate maxima file
-            var filePath = Path.Combine(_maximaDir, filename);
+            var filePath = Path.Combine(MaximaDir, filename);
             var file = File.Create(filePath);
             file.Close();
             var sw = new StreamWriter(filePath);
             sw.WriteLine("load(distrib)$");
-            for(var i=0;i<values.Length;++i)
+            var paramsString = GetArgsInFunctionCall(funcArgs);
+            for (var i = 0; i < values[0].Length; ++i)
             {
-                var sArg0 = values[i].ToString(CultureInfo.InvariantCulture).Replace(',', '.');
-                var sArg1 = funcArgs[0].ToString(CultureInfo.InvariantCulture).Replace(',', '.');
-                var sArg2 = funcArgs[1].ToString(CultureInfo.InvariantCulture).Replace(',', '.');
-                sw.WriteLine(funcName + "(" + sArg0 + "," + sArg1 + "," + sArg2 + ")$");
+                sw.Write(funcName + "(");
+                for (var argIdx = 0; argIdx < values.Length; ++argIdx)
+                {
+                    var sArg = values[argIdx][i].ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+                    sw.Write(sArg);
+                    if(argIdx < values.Length-1) sw.Write(",");
+                }
+                sw.Write(paramsString + ")$\n");
                 sw.WriteLine("bfloat(%,fpprec:" + precDigits + ");");
+
             }
             sw.Close();
             // Then generate batch
@@ -65,13 +71,26 @@ namespace SpecFuncTestGenerator
             swb.Close();
         }
 
-        private string FormatFileName(string funcName, double[] funcArgs)
+        private string GetArgsInFunctionCall(double[] funcArgs)
         {
-            var fileName = funcName;
+            if (funcArgs == null) return "";
+            var result = "";
             for (var i = 0; i < funcArgs.Length; ++i)
             {
-                fileName += "__" + funcArgs[i].ToString(CultureInfo.InvariantCulture).Replace('.', '_');
+                result += "," + funcArgs[i].ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            }
+            return result;
+        }
 
+        private static string FormatFileName(string funcName, double[] funcArgs)
+        {
+            var fileName = funcName;
+            if (funcArgs != null)
+            {
+                for (var i = 0; i < funcArgs.Length; ++i)
+                {
+                    fileName += "__" + funcArgs[i].ToString(CultureInfo.InvariantCulture).Replace('.', '_');
+                }
             }
             fileName += ".max";
             return fileName;

@@ -1,16 +1,17 @@
 using System;
+using System.Linq;
 
 namespace SpecFuncTestGenerator
 {
     public interface ITestPrettyPrinter
     {
-        string Format(string[] x, string[] fx, int precdigits, string funcName);
+        string Format(string[][] x, string[] fx, int precdigits, string funcName);
         string Tab();
     }
 
     public abstract class CSharpTestPrettyPrinter : ITestPrettyPrinter
     {
-        public abstract string Format(string[] x, string[] fx, int precdigits, string funcName);
+        public abstract string Format(string[][] x, string[] fx, int precdigits, string funcName);
 
         public string Tab()
         {
@@ -20,7 +21,7 @@ namespace SpecFuncTestGenerator
 
     public abstract class CppTestPrettyPrinter : ITestPrettyPrinter
     {
-        public abstract string Format(string[] x, string[] fx, int precdigits, string funcName);
+        public abstract string Format(string[][] x, string[] fx, int precdigits, string funcName);
 
         public string Tab()
         {
@@ -30,19 +31,32 @@ namespace SpecFuncTestGenerator
 
     public class NUnitCSharpTestPrettyPrinter : CSharpTestPrettyPrinter
     {
-        public override string Format(string[] x, string[] fx, int precdigits, string funcName)
+        public override string Format(string[][] x, string[] fx, int precdigits, string funcName)
         {
-            if(x.Length!=fx.Length)
+            var ss = "";
+            if (x[0].Length != fx.Length)
                 throw new Exception("x and fx have different sizes");
-            string ss = "";
-            for(var i=0;i<x.Length;++i)
+            for (var i = 0; i < x[0].Length; ++i)
             {
-                ss += "[TestCase(" + x[i] + "," + fx[i] + ")]\n";
+                ss += "[TestCase(";
+                ss = x.Aggregate(ss, (current, t) => current + (t[i] + ","));
+                ss += fx[i] + ")]\n";
             }
-            ss += "void " + funcName + "Test(double x, double fx)\n";
+            ss += "void " + funcName + "Test(";
+            for (var argIdx = 0; argIdx < x.Length; ++argIdx)
+            {
+                ss += "double x"+argIdx+",";
+            }
+            ss += " double fx)\n";
             ss += "{\n";
             ss += Tab() + "var prec = 1.0e-" + precdigits + ";\n";
-            ss += Tab() + "var f = " + funcName + "(x);\n";
+            ss += Tab() + "var f = " + funcName + "(";
+            for (var argIdx = 0; argIdx < x.Length; ++argIdx )
+            {
+                ss += "x" + argIdx;
+                if (argIdx < x.Length - 1) ss += ",";
+            }
+            ss += ");\n";
             ss += Tab() + "Assert.AreEqual(fx,f,prec);\n";
             ss += "}";
             return ss;
@@ -51,24 +65,27 @@ namespace SpecFuncTestGenerator
 
     public class GTestCppTestPrettyPrinter : CppTestPrettyPrinter
     {
-        public override string Format(string[] x, string[] fx, int precdigits, string funcName)
+        public override string Format(string[][] x, string[] fx, int precdigits, string funcName)
         {
-            if (x.Length != fx.Length)
-                throw new Exception("x and fx have different sizes");
-            var length = x.Length;
             var ss = "";
             ss += "TEST(SpecFunc," + funcName + ")\n";
             ss += "{\n";
             ss += Tab() + "double prec = 1.0e-" + precdigits + ";\n";
-            ss += Tab() + "double x[" + length + "] =\n";
-            ss += Tab() + Tab() + "{\n";
-            for (var i = 0; i < length; ++i)
+            int length;
+            for (var argIdx = 0; argIdx < x.Length; ++argIdx )
             {
-                ss += Tab() + Tab() +Tab()+ x[i];
-                if (i < length - 1) ss += ",";
-                ss += "\n";
+                length = x[argIdx].Length;
+                ss += Tab() + "double x"+argIdx+"[" + length + "] =\n";
+                ss += Tab() + Tab() + "{\n";
+                for (var i = 0; i < length; ++i)
+                {
+                    ss += Tab() + Tab() + Tab() + x[argIdx][i];
+                    if (i < length - 1) ss += ",";
+                    ss += "\n";
+                }
+                ss += Tab() + Tab() + "};\n";    
             }
-            ss += Tab() + Tab() + "};\n";
+            length = x[0].Length;
             ss += Tab() + "double fx[" + length + "] =\n";
             ss += Tab() + Tab() + "{\n";
             for (var i = 0; i < length; ++i)
@@ -78,9 +95,15 @@ namespace SpecFuncTestGenerator
                 ss += "\n";
             }
             ss += Tab() +  Tab()+ "};\n";
-            ss += Tab() + "for(size_t i=0;i<x.size();++i)\n";
+            ss += Tab() + "for(size_t i=0;i<fx.size();++i)\n";
             ss += Tab() + "{\n";
-            ss += Tab() + Tab() + "EXPECT_NEAR(fx[i],"+funcName + "(x[i]),prec);\n";
+            ss += Tab() + Tab() + "EXPECT_NEAR(fx[i]," + funcName + "(";
+            for(var argIdx = 0; argIdx < x.Length ; ++argIdx)
+            {
+                ss += "x" + argIdx + "[i]";
+                if (argIdx < x.Length - 1) ss += ",";
+            }
+            ss += "),prec);\n";
             ss += Tab() + "}\n";
             ss += "}";
             return ss;

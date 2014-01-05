@@ -19,24 +19,53 @@ namespace SpecFuncTestGenerator
 
         private void Button1Click(object sender, EventArgs e)
         {
-            const int n = 10;
-            var xmax = double.Parse(inputValueMax.Text);
-            var xmin = double.Parse(inputValueMin.Text);
-            var step = (xmax - xmin)/n;
-            var gen = new EquiIntervalGenerator(step);
-            var x = gen.Generate(xmin, xmax);
-            var xs = new string[x.Length];
-            for(var i=0;i<x.Length;++i)
-            {
-                xs[i] = x[i].ToString(CultureInfo.InvariantCulture);
-            }
             var motor = new MaximaMotor();
+            
+            // Getting args
+            var x = GetCurrentValues();
             var args = GetCurrentArgs();
             var prec = int.Parse(precDigits.Text);
-            var res = motor.Call("cdf_normal", x, args, prec);
+            
+            var res = motor.Call(registeredFunc.Text, x, args, prec);
             var printer = TestPrettyPrinterFactory.Instance(isCpp.Checked);
+
+            // Converting x to string
+            var xs = new string[x.Length][];
+            for (var argIdx = 0; argIdx < x.Length; ++argIdx)
+            {
+                xs[argIdx] = new string[x[argIdx].Length];
+                for (var i = 0; i < x[argIdx].Length; ++i)
+                {
+                    xs[argIdx][i] = x[argIdx][i].ToString(CultureInfo.InvariantCulture);
+                }
+            }
             var output = printer.Format(xs, res, prec, "cnorm");
             MessageBox.Show(output);
+        }
+
+        private double[][] GetCurrentValues()
+        {
+            double[] xmin;
+            double[] xmax;
+            if(input2ValueMax.Visible)
+            {
+                xmin = new double[2];
+                xmin[0] = double.Parse(input1ValueMin.Text);
+                xmin[1] = double.Parse(input2ValueMin.Text);
+                xmax = new double[2];
+                xmax[0] = double.Parse(input1ValueMax.Text);
+                xmax[1] = double.Parse(input2ValueMax.Text);
+            }
+            else
+            {
+                xmin = new double[1];
+                xmin[0] = double.Parse(input1ValueMin.Text);
+                xmax = new double[1];
+                xmax[0] = double.Parse(input1ValueMax.Text);
+            }
+            const int n = 10;
+            var gen = new EquiIntervalGenerator(n);
+            return gen.Generate(xmin, xmax);
         }
 
         private double[] GetCurrentArgs()
@@ -65,7 +94,7 @@ namespace SpecFuncTestGenerator
                                double.Parse(parameter1.Text)
                            };
             }
-            throw  new Exception("No parameter visible : cannot get args.");
+            return null;
         }
 
         private void RegisteredFuncSelectedIndexChanged(object sender, EventArgs e)
@@ -74,6 +103,11 @@ namespace SpecFuncTestGenerator
             {
                 if(t.Item1==registeredFunc.Text)
                 {
+                    var nbValues = t.Item2;
+                    input1ValueMax.Hide();
+                    input1ValueMin.Hide();
+                    input2ValueMax.Hide();
+                    input2ValueMin.Hide();
                     var nbArgs = t.Item3;
                     parameter1.Hide();
                     parameter2.Hide();
@@ -89,6 +123,16 @@ namespace SpecFuncTestGenerator
                     if(nbArgs>=1)
                     {
                         parameter1.Show();
+                    }
+                    if(nbValues==2)
+                    {
+                        input2ValueMax.Show();
+                        input2ValueMin.Show();
+                    }
+                    if(nbValues>=1)
+                    {
+                        input1ValueMax.Show();
+                        input1ValueMin.Show();
                     }
                     break;
                 }

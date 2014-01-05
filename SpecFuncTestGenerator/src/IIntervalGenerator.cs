@@ -4,25 +4,30 @@ namespace SpecFuncTestGenerator
 {
     public interface IIntervalGenerator
     {
-        double[] Generate(double xmin, double xmax);
+        double[][] Generate(double[] xmin, double[] xmax);
     }
 
     public class EquiIntervalGenerator : IIntervalGenerator
     {
-        private readonly double _step;
+        private readonly int _n;
 
-        public EquiIntervalGenerator(double step)
+        public EquiIntervalGenerator(int n)
         {
-            _step = step;
+            _n = n;
         }
 
-        public double[] Generate(double xmin, double xmax)
+        public double[][] Generate(double[] xmin, double[] xmax)
         {
-            var n = Convert.ToInt16((xmax - xmin)/_step);
-            var res = new double[n+1];
-            for(var i=0;i<n+1;++i)
+            var size = xmin.Length;
+            var res = new double[size][];
+            for (var argIdx = 0; argIdx < xmin.Length;++argIdx )
             {
-                res[i] = xmin + i*_step;
+                var step = (xmax[argIdx] - xmin[argIdx]) / (_n - 1);
+                res[argIdx] = new double[_n];
+                for (var idx = 0; idx < _n; ++idx)
+                {
+                    res[argIdx][idx] = xmin[argIdx] + idx * step;
+                }
             }
             return res;
         }
