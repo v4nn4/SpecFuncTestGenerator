@@ -25,10 +25,16 @@ namespace SpecFuncTestGenerator
             var x = GetCurrentValues();
             var args = GetCurrentArgs();
             var prec = int.Parse(precDigits.Text);
-            
-            var res = motor.Call(registeredFunc.Text, x, args, prec);
-            var printer = TestPrettyPrinterFactory.Instance(isCpp.Checked);
 
+            var res = motor.Call(registeredFunc.Text, x, args, prec);
+
+            if(!res.Item2)
+            {
+                MessageBox.Show(res.Item1[0]);
+                return;
+            }
+
+            var printer = TestPrettyPrinterFactory.Instance(isCpp.Checked);
             // Converting x to string
             var xs = new string[x.Length][];
             for (var argIdx = 0; argIdx < x.Length; ++argIdx)
@@ -39,7 +45,7 @@ namespace SpecFuncTestGenerator
                     xs[argIdx][i] = x[argIdx][i].ToString(CultureInfo.InvariantCulture);
                 }
             }
-            var output = printer.Format(xs, res, prec, "cnorm");
+            var output = printer.Format(xs, res.Item1, prec, "cnorm");
             MessageBox.Show(output);
         }
 
@@ -108,6 +114,8 @@ namespace SpecFuncTestGenerator
                     input1ValueMin.Hide();
                     input2ValueMax.Hide();
                     input2ValueMin.Hide();
+                    labelInput2Max.Hide();
+                    labelInput2Min.Hide();
                     var nbArgs = t.Item3;
                     parameter1.Hide();
                     parameter2.Hide();
@@ -128,6 +136,8 @@ namespace SpecFuncTestGenerator
                     {
                         input2ValueMax.Show();
                         input2ValueMin.Show();
+                        labelInput2Max.Show();
+                        labelInput2Min.Show();
                     }
                     if(nbValues>=1)
                     {

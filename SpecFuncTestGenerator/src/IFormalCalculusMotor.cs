@@ -1,7 +1,9 @@
+using System;
+
 namespace SpecFuncTestGenerator
 {
     public interface IFormalCalculusMotor
     {
-        string[] Call(string funcName, double[][] values, double[] funcArgs, int precDigits);
+        Tuple<string[],bool> Call(string funcName, double[][] values, double[] funcArgs, int precDigits);
     }
 }

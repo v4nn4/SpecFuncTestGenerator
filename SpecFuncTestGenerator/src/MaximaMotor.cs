@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -10,7 +11,7 @@ namespace SpecFuncTestGenerator
         private const string MaximaDir = @"D:\Program Files (x86)\Maxima-5.31.2\share\maxima\5.31.2\share";
         private readonly string _currentDir = Directory.GetCurrentDirectory();
 
-        public string[] Call(string funcName, double[][] values, double[] funcArgs, int precDigits)
+        public Tuple<string[],bool> Call(string funcName, double[][] values, double[] funcArgs, int precDigits)
         {
             var filename = FormatFileName(funcName,funcArgs);
             GenerateBatch(filename, funcName, values, funcArgs, precDigits);
@@ -96,16 +97,27 @@ namespace SpecFuncTestGenerator
             return fileName;
         }
 
-        private static string[] ParseMaximaOutput(string str)
+        private static Tuple<string[], bool> ParseMaximaOutput(string str)
         {
             var regex = new Regex("\\(%o[0-9]+\\)(.+)([0-9]\\.[0-9]+b.+)");
             var match = regex.Matches(str);
-            var formattedFloat = new string[match.Count];
-            for(var i=0;i<match.Count;++i)
+            if(match.Count!=0)
             {
-                formattedFloat[i] = match[i].Groups[2].Value.Replace('b', 'e');
+                var formattedFloat = new string[match.Count];
+                for (var i = 0; i < match.Count; ++i)
+                {
+                    formattedFloat[i] = match[i].Groups[2].Value.Replace('b', 'e');
+                }
+                return new Tuple<string[], bool>(formattedFloat,true);
             }
-            return formattedFloat;
+            else
+            {
+                // Maxima thrown an error
+                var regexError = new Regex("([^%].+)\\n\\s--\\san error\\.\\sTo\\sdebug\\sthis\\stry:\\sdebugmode\\(true\\);");
+                var matchError = regexError.Matches(str);
+                var errorString = matchError[0].Groups[1].Value.Replace("\\n", "");
+                return new Tuple<string[], bool>(new string[1]{errorString}, false);
+            }
         }
     }
 }
