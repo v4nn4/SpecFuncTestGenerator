@@ -110,14 +110,11 @@ namespace SpecFuncTestGenerator
                 }
                 return new Tuple<string[], bool>(formattedFloat,true);
             }
-            else
-            {
-                // Maxima thrown an error
-                var regexError = new Regex("([^%].+)\\n\\s--\\san error\\.\\sTo\\sdebug\\sthis\\stry:\\sdebugmode\\(true\\);");
-                var matchError = regexError.Matches(str);
-                var errorString = matchError[0].Groups[1].Value.Replace("\\n", "");
-                return new Tuple<string[], bool>(new string[1]{errorString}, false);
-            }
+            // Maxima thrown an error
+            var regexError = new Regex("([^%].+)\\n\\s--\\san error\\.\\sTo\\sdebug\\sthis\\stry:\\sdebugmode\\(true\\);");
+            var matchError = regexError.Matches(str);
+            var errorString = matchError[0].Groups[1].Value.Replace("\\n", "");
+            return new Tuple<string[], bool>(new[]{errorString}, false);
         }
     }
 }

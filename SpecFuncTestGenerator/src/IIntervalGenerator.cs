@@ -1,5 +1,3 @@
-using System;
-
 namespace SpecFuncTestGenerator
 {
     public interface IIntervalGenerator
