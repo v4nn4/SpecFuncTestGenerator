@@ -1,4 +1,4 @@
-#include "IIntervalGenerator.hpp"
+#include "IntervalGenerator.hpp"
 
 std::vector<std::vector<double>> IntervalGenerator::Generate(const std::vector<double>& xmin, const std::vector<double>& xmax)
 {
