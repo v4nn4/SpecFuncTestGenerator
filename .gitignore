@@ -1,12 +1,1 @@
-# Visual studio
-*.suo
-_ReSharper*
-build
-*.DotSettings.user
-*.cache
-*.pdb
-*.dll
-*.txt
-*.exe
-obj/
-Debug/
+.DS_Store
