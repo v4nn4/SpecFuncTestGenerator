@@ -5,7 +5,7 @@ Unit test generator for special functions with arbitrary precision using Maxima
 
 ###How to build
 
-Use the [http://www.cmake.org/](CMake) file `CMakeLists.txt` to generate solutions for various IDEs.
+Use the [CMake](http://www.cmake.org/) file `CMakeLists.txt` to generate solutions for various IDEs.
 
 ###How to use
 
