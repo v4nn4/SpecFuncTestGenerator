@@ -12,9 +12,11 @@ Result MaximaMotor::Call(const std::string& funcName, const std::vector<std::vec
 {
     std::string filename = FormatFileName(funcName,funcArgs);
     GenerateMaximaFile(filename, funcName, values, funcArgs, precisionDigits);
+    std::stringstream cd;
+    cd << "cd " << _requiredDirectories.cwd.c_str();
+    std::system(cd.str().c_str());
     std::stringstream ss;
-    std::system(_requiredDirectories.cwd.c_str());
-    ss << "exec '" << _requiredDirectories.maxima << "' -b=" << _requiredDirectories.cwd << filename;
+    ss << "exec " << _requiredDirectories.maxima << " -b=" << _requiredDirectories.cwd << filename;
     std::system(ss.str().c_str());
     std::string output;
     return ParseMaximaOutput(output);
