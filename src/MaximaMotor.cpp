@@ -2,14 +2,20 @@
 #include <fstream>
 #include "MaximaMotor.hpp"
 
+MaximaMotor::MaximaMotor(const RequiredDirectories& requiredDirectories)
+: _requiredDirectories(requiredDirectories)
+{
+
+}
+
 Result MaximaMotor::Call(const std::string& funcName, const std::vector<std::vector<double>>& values, const std::vector<double>& funcArgs, const unsigned int& precisionDigits)
 {
     std::string filename = FormatFileName(funcName,funcArgs);
     GenerateMaximaFile(filename, funcName, values, funcArgs, precisionDigits);
     std::stringstream ss;
-    ss << "maxima -b=" << filename;
+    std::system(_requiredDirectories.cwd.c_str());
+    ss << "exec '" << _requiredDirectories.maxima << "' -b=" << _requiredDirectories.cwd << filename;
     std::system(ss.str().c_str());
-
     std::string output;
     return ParseMaximaOutput(output);
 }
@@ -17,9 +23,10 @@ Result MaximaMotor::Call(const std::string& funcName, const std::vector<std::vec
 void MaximaMotor::GenerateMaximaFile(const std::string &filename, const std::string &funcName, const std::vector<std::vector<double>> &values, const std::vector<double> &funcArgs, const unsigned int &precisionDigits)
 {
     // First generate maxima file
-    std::string tempFilePath;
+    std::stringstream tempFilePath;
+    tempFilePath << _requiredDirectories.cwd << filename;
     std::ofstream sw;
-    sw.open(tempFilePath);
+    sw.open(tempFilePath.str());
     sw << "load(distrib)$" << std::endl;
     std::string paramsString = GetArgsInFunctionCall(funcArgs);
     for (size_t i = 0; i < values[0].size(); ++i)
@@ -33,14 +40,14 @@ void MaximaMotor::GenerateMaximaFile(const std::string &filename, const std::str
             if(argIdx < values.size()-1) sw << ",";
         }
         sw << paramsString << ")$\n";
-        sw << "bfloat(%,fpprec:" << precisionDigits << ");";
+        sw << "bfloat(%);"; //,fpprec:" << precisionDigits << ");";
     }
     sw.close();
 }
 
 std::string MaximaMotor::GetArgsInFunctionCall(const std::vector<double>& funcArgs)
 {
-    if (funcArgs.size()>0) return "";
+    if (funcArgs.size()==0) return "";
     std::stringstream result;
     std::string s;
     for (size_t i = 0; i < funcArgs.size(); ++i)
