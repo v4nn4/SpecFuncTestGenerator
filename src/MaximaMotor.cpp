@@ -1,75 +1,53 @@
 #include <sstream>
+#include <fstream>
 #include "MaximaMotor.hpp"
 
 Result MaximaMotor::Call(const std::string& funcName, const std::vector<std::vector<double>>& values, const std::vector<double>& funcArgs, const unsigned int& precisionDigits)
 {
     std::string filename = FormatFileName(funcName,funcArgs);
-    GenerateBatch(filename, funcName, values, funcArgs, precisionDigits);
-    /*var processStartInfo = new ProcessStartInfo
-            {
-                    FileName = "run.bat",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true
-            };
-    var process = new Process
-            {
-                    StartInfo = processStartInfo
-            };
-    process.Start();
-    var output = process.StandardOutput.ReadToEnd();
-    process.WaitForExit();
-    process.Close();
-    DeleteBatch(filename);*/
+    GenerateMaximaFile(filename, funcName, values, funcArgs, precisionDigits);
+    std::stringstream ss;
+    ss << "maxima -b=" << filename;
+    std::system(ss.str().c_str());
+
     std::string output;
     return ParseMaximaOutput(output);
 }
 
-void MaximaMotor::DeleteBatch(const std::string& filename)
-{
-    /*File.Delete(Path.Combine(MaximaDir, filename));
-    File.Delete(Path.Combine(_currentDir, "run.bat"));*/
-}
-
-void MaximaMotor::GenerateBatch(const std::string& filename, const std::string& funcName, const std::vector<std::vector<double>>& values, const std::vector<double>& funcArgs, const unsigned int& precDigits)
+void MaximaMotor::GenerateMaximaFile(const std::string &filename, const std::string &funcName, const std::vector<std::vector<double>> &values, const std::vector<double> &funcArgs, const unsigned int &precisionDigits)
 {
     // First generate maxima file
-    /*var filePath = Path.Combine(MaximaDir, filename);
-    var file = File.Create(filePath);
-    file.Close();
-    var sw = new StreamWriter(filePath);
-    sw.WriteLine("load(distrib)$");
-    var paramsString = GetArgsInFunctionCall(funcArgs);
-    for (var i = 0; i < values[0].Length; ++i)
+    std::string tempFilePath;
+    std::ofstream sw;
+    sw.open(tempFilePath);
+    sw << "load(distrib)$" << std::endl;
+    std::string paramsString = GetArgsInFunctionCall(funcArgs);
+    for (size_t i = 0; i < values[0].size(); ++i)
     {
-        sw.Write(funcName + "(");
-        for (var argIdx = 0; argIdx < values.Length; ++argIdx)
+        sw << funcName << "(";
+        for (size_t argIdx = 0; argIdx < values.size(); ++argIdx)
         {
-            var sArg = values[argIdx][i].ToString(CultureInfo.InvariantCulture).Replace(',', '.');
-            sw.Write(sArg);
-            if(argIdx < values.Length-1) sw.Write(",");
+            std::string sArg = std::to_string(values[argIdx][i]);
+            std::replace(sArg.begin(),sArg.end(),',', '.');
+            sw << sArg;
+            if(argIdx < values.size()-1) sw << ",";
         }
-        sw.Write(paramsString + ")$\n");
-        sw.WriteLine("bfloat(%,fpprec:" + precDigits + ");");
-
+        sw << paramsString << ")$\n";
+        sw << "bfloat(%,fpprec:" << precisionDigits << ");";
     }
-    sw.Close();
-    // Then generate batch
-    var currentDir = Directory.GetCurrentDirectory();
-    var batchFilePath = Path.Combine(currentDir, "run.bat");
-    var batchFile = File.Create(batchFilePath);
-    batchFile.Close();
-    var swb = new StreamWriter(batchFilePath);
-    swb.WriteLine("maxima -b="+filename);
-    swb.Close();*/
+    sw.close();
 }
 
 std::string MaximaMotor::GetArgsInFunctionCall(const std::vector<double>& funcArgs)
 {
     if (funcArgs.size()>0) return "";
     std::stringstream result;
+    std::string s;
     for (size_t i = 0; i < funcArgs.size(); ++i)
     {
-        result << "," << funcArgs[i]; //.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+        s = funcArgs[i];
+        std::replace(s.begin(),s.end(),',','.');
+        result << "," << funcArgs[i];
     }
     return result.str();
 }
@@ -80,9 +58,12 @@ std::string MaximaMotor::FormatFileName(const std::string& funcName, const std::
     fileName << funcName;
     if (funcArgs.size()>0)
     {
+        std::string s;
         for (size_t i = 0; i < funcArgs.size(); ++i)
         {
-            fileName << "__" << funcArgs[i]; //.ToString(CultureInfo.InvariantCulture).Replace('.', '_');
+            s = funcArgs[i];
+            std::replace(s.begin(),s.end(),'.','_');
+            fileName << "__" << funcArgs[i];
         }
     }
     fileName << ".max";
