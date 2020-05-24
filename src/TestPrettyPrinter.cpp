@@ -1,61 +1,53 @@
 #include "TestPrettyPrinter.hpp"
 
-std::string CSharpTestPrettyPrinter::Tab()
-{
-    return "    ";
-}
-
-std::string CppTestPrettyPrinter::Tab()
-{
-    return "  ";
-}
-
 std::string GTestCppTestPrettyPrinter::Format(const std::vector<std::vector<std::string>>& x, const std::vector<std::string>& fx, const unsigned int& precisionDigits, const std::string& funcName)
 {
+    auto tab = "  ";
     std::stringstream ss;
     ss << "TEST(SpecFunc," << funcName << ")\n";
     ss << "{\n";
-    ss << Tab() << "double prec = 1.0e-" << precisionDigits << ";\n";
+    ss << tab << "double prec = 1.0e-" << precisionDigits << ";\n";
     size_t length;
     for (size_t argIdx = 0; argIdx < x.size(); ++argIdx )
     {
         length = x[argIdx].size();
-        ss << Tab() << "double x" << argIdx << "[" << length << "] =\n";
-        ss << Tab() << Tab() << "{\n";
+        ss << tab << "double x" << argIdx << "[" << length << "] =\n";
+        ss << tab << tab << "{\n";
         for (size_t i = 0; i < length; ++i)
         {
-            ss << Tab() << Tab() << Tab() << x[argIdx][i];
+            ss << tab << tab << tab << x[argIdx][i];
             if (i < length - 1) ss << ",";
             ss << "\n";
         }
-        ss << Tab() << Tab() << "};\n";
+        ss << tab << tab << "};\n";
     }
     length = x[0].size();
-    ss << Tab() << "double fx[" << length << "] =\n";
-    ss << Tab() << Tab() << "{\n";
+    ss << tab << "double fx[" << length << "] =\n";
+    ss << tab << tab << "{\n";
     for (size_t i = 0; i < length; ++i)
     {
-        ss << Tab() << Tab() << Tab() << fx[i];
+        ss << tab << tab << tab << fx[i];
         if (i < length - 1) ss << ",";
         ss << "\n";
     }
-    ss << Tab() <<  Tab() << "};\n";
-    ss << Tab() << "for(size_t i=0;i<fx.size();++i)\n";
-    ss << Tab() << "{\n";
-    ss << Tab() << Tab() << "EXPECT_NEAR(fx[i]," << funcName << "(";
+    ss << tab <<  tab << "};\n";
+    ss << tab << "for(size_t i=0;i<fx.size();++i)\n";
+    ss << tab << "{\n";
+    ss << tab << tab << "EXPECT_NEAR(fx[i]," << funcName << "(";
     for(size_t argIdx = 0; argIdx < x.size() ; ++argIdx)
     {
         ss << "x" << argIdx << "[i]";
         if (argIdx < x.size()- 1) ss << ",";
     }
     ss << "),prec);\n";
-    ss << Tab() << "}\n";
+    ss << tab << "}\n";
     ss << "}";
     return ss.str();
 }
 
 std::string NUnitCSharpTestPrettyPrinter::Format(const std::vector<std::vector<std::string>>& x, const std::vector<std::string>& fx, const unsigned int& precisionDigits, const std::string& funcName)
 {
+    auto tab = "    ";
     std::stringstream ss;
     if (x[0].size() != fx.size())
         throw std::invalid_argument("x and fx have different sizes");
@@ -72,15 +64,15 @@ std::string NUnitCSharpTestPrettyPrinter::Format(const std::vector<std::vector<s
     }
     ss << " double fx)\n";
     ss << "{\n";
-    ss << Tab() << "var prec = 1.0e-" << precisionDigits << ";\n";
-    ss << Tab() << "var f = " << funcName << "(";
+    ss << tab << "var prec = 1.0e-" << precisionDigits << ";\n";
+    ss << tab << "var f = " << funcName << "(";
     for (size_t argIdx = 0; argIdx < x.size(); ++argIdx )
     {
         ss << "x" << argIdx;
         if (argIdx < x.size()- 1) ss << ",";
     }
     ss << ");\n";
-    ss << Tab() << "Assert.AreEqual(fx,f,prec);\n";
+    ss << tab << "Assert.AreEqual(fx,f,prec);\n";
     ss << "}";
     return ss.str();
 }
